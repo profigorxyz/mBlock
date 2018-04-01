@@ -26,7 +26,7 @@ const _languages = [
             {name:"latin5",label:"Türkçe"},
             {name:"cz_CZ",label:"Čeština"},
             {name:"IA5",label:"Svenska"},
-            {name:"pt_BR",label:"Português"},
+            {name:"pt_BR",label:"Português BR"},
             {name:"pl_PL",label:"Polski"},
             {name:"hr_HRV",label:"Hrvatski"}															
 			];

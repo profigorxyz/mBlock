@@ -29,6 +29,12 @@
 		HIGH:1,
 		LOW:0
 	};
+	var shutterStatus = {
+		Press:0,
+		Release:1,
+		'Focus On':2,
+		'Focus Off':3,
+	};
 	var axis = {
 		'X-Axis':1,
 		'Y-Axis':2,
@@ -48,10 +54,18 @@
 	
 	var startTimer = 0;
 	var versionIndex = 0xFA;
+	ext.setupMotor = function(){
+		
+	};
+	ext.setMotorDirection = function(){
+		
+	};
+	ext.runMotor = function(){
+		
+	};
     ext.resetAll = function(){
     	device.send([0xff, 0x55, 2, 0, 4]);
     };
-	
 	ext.runArduino = function(){
 		responseValue();
 	};
@@ -86,7 +100,7 @@
 	ext.getUltrasonicArduino = function(nextID,trig,echo){
 		var deviceId = 36;
 		getPackage(nextID,deviceId,trig,echo);
-	}
+	};
 	ext.getTimer = function(nextID){
 		if(startTimer==0){
 			startTimer = new Date().getTime();
@@ -109,12 +123,34 @@
 	}
 	
 	function runPackage(){
-		sendPackage(arguments, 2);
+		var bytes = [];
+		bytes.push(0xff);
+		bytes.push(0x55);
+		bytes.push(0);
+		bytes.push(0);
+		bytes.push(2);
+		for(var i=0;i<arguments.length;i++){
+			if(arguments[i].constructor == "[class Array]"){
+				bytes = bytes.concat(arguments[i]);
+			}else{
+				bytes.push(arguments[i]);
+			}
+		}
+		bytes[2] = bytes.length-3;
+		device.send(bytes);
 	}
+
 	function getPackage(){
-		var nextID = arguments[0];
-		Array.prototype.shift.call(arguments);
-		sendPackage(arguments, 1);
+		var bytes = [];
+		bytes.push(0xff);
+		bytes.push(0x55);
+		bytes.push(arguments.length+1);
+		bytes.push(arguments[0]);
+		bytes.push(1);
+		for(var i=1;i<arguments.length;i++){
+			bytes.push(arguments[i]);
+		}
+		device.send(bytes);
 	}
 
     var inputArray = [];
@@ -191,6 +227,10 @@
 	function readFloat(arr,position){
 		var f= [arr[position],arr[position+1],arr[position+2],arr[position+3]];
 		return parseFloat(f);
+	}
+	function readShort(arr,position){
+		var s= [arr[position],arr[position+1]];
+		return parseShort(s);
 	}
 	function readInt(arr,position,count){
 		var result = 0;
